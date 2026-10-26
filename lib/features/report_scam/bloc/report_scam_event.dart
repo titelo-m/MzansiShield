@@ -33,20 +33,22 @@ class SubmitReportEvent extends ReportScamEvent {
 
 class ResetFormEvent extends ReportScamEvent {}
 
-class VerifyReportEvent extends ReportScamEvent {
-  final int index;
+class LoadReportsEvent extends ReportScamEvent {}
 
-  const VerifyReportEvent(this.index);
+class VerifyReportEvent extends ReportScamEvent {
+  final int id;
+
+  const VerifyReportEvent(this.id);
 
   @override
-  List<Object> get props => [index];
+  List<Object> get props => [id];
 }
 
 class MarkFalseReportEvent extends ReportScamEvent {
-  final int index;
+  final int id;
 
-  const MarkFalseReportEvent(this.index);
+  const MarkFalseReportEvent(this.id);
 
   @override
-  List<Object> get props => [index];
+  List<Object> get props => [id];
 }

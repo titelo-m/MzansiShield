@@ -59,6 +59,15 @@ class _ReportScamViewState extends State<ReportScamView> {
               ),
             );
           }
+          if (state.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error: ${state.errorMessage}'),
+                backgroundColor: AppColors.alertRed,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
         },
         builder: (context, state) {
           return ScrollConfiguration(
@@ -554,10 +563,8 @@ class _ReportsList extends StatelessWidget {
     }
 
     return Column(
-      children: reports.asMap().entries.map((entry) {
-        final index = entry.key;
-        final report = entry.value;
-        return _ReportCard(report: report, index: index, t: t);
+      children: reports.map((report) {
+        return _ReportCard(report: report, index: report.id, t: t);
       }).toList(),
     );
   }
@@ -572,7 +579,7 @@ class _ReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPending = report.status == 'Pending';
+    final isPending = report.status == 'PENDING';
     
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
