@@ -46,3 +46,7 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Spring Boot backend
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
