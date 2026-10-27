@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/api/api_service.dart';
 import 'link_checker_event.dart';
 import 'link_checker_state.dart';
 
@@ -14,28 +15,36 @@ class LinkCheckerBloc extends Bloc<LinkCheckerEvent, LinkCheckerState> {
 
     emit(state.copyWith(isLoading: true));
 
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final data = await ApiService.checkLink(event.input);
 
-    final bool isUrl = event.input.contains('.');
-    final bool isSuspicious = event.input.contains('paypal-login') || 
-                              event.input.contains('sars') || 
-                              event.input.contains('bank') || 
-                              !isUrl;
+      final bool isSafe = data['safe'] ?? data['isSafe'] ?? true;
+      final int score = data['score'] ?? 0;
+      final List<String> reasons = (data['reasons'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [];
+      final String advice = data['advice'] ?? '';
 
-    final newCheck = RecentCheck(
-      input: event.input,
-      type: isUrl ? 'URL' : 'Message',
-      time: 'Just now',
-      score: isSuspicious ? 10 : 2,
-      isSafe: !isSuspicious,
-    );
+      final newCheck = RecentCheck(
+        input: event.input,
+        type: event.input.contains('.') && !event.input.contains(' ') ? 'URL' : 'Message',
+        time: 'Just now',
+        score: score,
+        isSafe: isSafe,
+        reasons: reasons,
+        advice: advice,
+      );
 
-    final updatedChecks = [newCheck, ...state.recentChecks];
+      final updatedChecks = [newCheck, ...state.recentChecks];
 
-    emit(state.copyWith(
-      isLoading: false,
-      recentChecks: updatedChecks,
-    ));
+      emit(state.copyWith(
+        isLoading: false,
+        recentChecks: updatedChecks,
+      ));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false));
+    }
   }
 
   void _onClearAll(ClearAllChecksEvent event, Emitter<LinkCheckerState> emit) {

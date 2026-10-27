@@ -6,6 +6,8 @@ class RecentCheck extends Equatable {
   final String time;
   final int score;
   final bool isSafe;
+  final List<String> reasons;
+  final String advice;
 
   const RecentCheck({
     required this.input,
@@ -13,10 +15,12 @@ class RecentCheck extends Equatable {
     required this.time,
     required this.score,
     required this.isSafe,
+    this.reasons = const [],
+    this.advice = '',
   });
 
   @override
-  List<Object> get props => [input, type, time, score, isSafe];
+  List<Object> get props => [input, type, time, score, isSafe, reasons, advice];
 }
 
 class LinkCheckerState extends Equatable {

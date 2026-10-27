@@ -153,7 +153,9 @@ class _LinkCheckerViewState extends State<LinkCheckerView> {
                           BlocBuilder<LinkCheckerBloc, LinkCheckerState>(
                             builder: (context, state) {
                               return MouseRegion(
-                                cursor: _hasText && !state.isLoading ? SystemMouseCursors.click : SystemMouseCursors.basic,
+                                cursor: _hasText && !state.isLoading
+                                    ? SystemMouseCursors.click
+                                    : SystemMouseCursors.basic,
                                 child: SizedBox(
                                   width: double.infinity,
                                   height: 56,
@@ -161,11 +163,15 @@ class _LinkCheckerViewState extends State<LinkCheckerView> {
                                     onPressed: (!_hasText || state.isLoading)
                                         ? null
                                         : () {
-                                            context.read<LinkCheckerBloc>().add(CheckLinkEvent(_controller.text));
+                                            context
+                                                .read<LinkCheckerBloc>()
+                                                .add(CheckLinkEvent(_controller.text));
                                             _controller.clear();
                                           },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: _hasText ? const Color(0xFF996500) : const Color(0xFF2A2E38),
+                                      backgroundColor: _hasText
+                                          ? const Color(0xFF996500)
+                                          : const Color(0xFF2A2E38),
                                       foregroundColor: _hasText ? Colors.white : Colors.white38,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
@@ -254,7 +260,8 @@ class _RecentChecksSection extends StatelessWidget {
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: TextButton(
-                        onPressed: () => context.read<LinkCheckerBloc>().add(ClearAllChecksEvent()),
+                        onPressed: () =>
+                            context.read<LinkCheckerBloc>().add(ClearAllChecksEvent()),
                         child: Text(
                           t.translate('lc_clear'),
                           style: GoogleFonts.inter(color: Colors.white, fontSize: 14),
@@ -351,7 +358,9 @@ class _ExpandableCheckCardState extends State<_ExpandableCheckCard> {
                 child: Row(
                   children: [
                     Icon(
-                      widget.check.isSafe ? Icons.check_circle_outline : Icons.highlight_off,
+                      widget.check.isSafe
+                          ? Icons.check_circle_outline
+                          : Icons.highlight_off,
                       color: widget.color,
                       size: 24,
                     ),
@@ -363,14 +372,16 @@ class _ExpandableCheckCardState extends State<_ExpandableCheckCard> {
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFF2A2E38),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
                                   widget.check.type,
-                                  style: const TextStyle(color: Colors.white, fontSize: 10),
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 10),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -399,14 +410,15 @@ class _ExpandableCheckCardState extends State<_ExpandableCheckCard> {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: widget.color.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: widget.color.withOpacity(0.5)),
                       ),
                       child: Text(
-                        '${widget.check.score}/10',
+                        '${widget.check.score}/100',
                         style: GoogleFonts.inter(
                           color: widget.color,
                           fontSize: 12,
@@ -418,8 +430,11 @@ class _ExpandableCheckCardState extends State<_ExpandableCheckCard> {
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: IconButton(
-                        icon: const Icon(Icons.delete_outline, color: Colors.white54, size: 20),
-                        onPressed: () => context.read<LinkCheckerBloc>().add(DeleteCheckEvent(widget.index)),
+                        icon: const Icon(Icons.delete_outline,
+                            color: Colors.white54, size: 20),
+                        onPressed: () => context
+                            .read<LinkCheckerBloc>()
+                            .add(DeleteCheckEvent(widget.index)),
                       ),
                     ),
                   ],
@@ -444,26 +459,31 @@ class _ExpandableCheckCardState extends State<_ExpandableCheckCard> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildBulletPoint(t.translate('lc_bullet1')),
-                  _buildBulletPoint(t.translate('lc_bullet2')),
-                  _buildBulletPoint(t.translate('lc_bullet3')),
-                  const SizedBox(height: 16),
-                  Text(
-                    t.translate('lc_advice'),
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                  if (widget.check.reasons.isEmpty)
+                    _buildBulletPoint(
+                        'No specific reasons could be identified.')
+                  else
+                    ...widget.check.reasons
+                        .map((reason) => _buildBulletPoint(reason)),
+                  if (widget.check.advice.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      t.translate('lc_advice'),
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    t.translate('lc_advice_text'),
-                    style: GoogleFonts.inter(
-                      color: AppColors.textGrey,
-                      fontSize: 13,
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.check.advice,
+                      style: GoogleFonts.inter(
+                        color: AppColors.textGrey,
+                        fontSize: 13,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

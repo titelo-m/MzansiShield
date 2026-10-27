@@ -65,4 +65,17 @@ class ApiService {
     }
     throw Exception('Failed to load stats: ${response.statusCode}');
   }
+
+  static Future<Map<String, dynamic>> checkLink(String input) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/check'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'input': input}),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    }
+    throw Exception('Failed to check link: ${response.statusCode}');
+  }
 }
