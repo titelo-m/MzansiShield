@@ -3,7 +3,6 @@ services:
     name: mzansishield-api
     runtime: docker
     plan: free
-    rootDir: backend
     envVars:
       - key: DB_HOST
         sync: false
