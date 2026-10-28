@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: mzansishield-api
+    runtime: docker
+    plan: free
+    rootDir: backend
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: GOOGLE_SAFEBROWSING_API_KEY
+        sync: false
