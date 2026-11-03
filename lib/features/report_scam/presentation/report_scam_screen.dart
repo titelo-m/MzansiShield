@@ -52,7 +52,7 @@ class _ReportScamViewState extends State<ReportScamView> {
             const SizedBox(width: 12),
             const Expanded(
               child: Text(
-                'We use free hosting. Reports and stats may take up to 60 seconds to load for the first time.',
+                'We use free hosting. Reports and stats may take up to 60 seconds to load for the first time...',
                 style: TextStyle(color: Colors.white, fontSize: 13),
               ),
             ),
