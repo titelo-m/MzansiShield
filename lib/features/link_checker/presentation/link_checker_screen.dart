@@ -31,6 +31,7 @@ class _LinkCheckerViewState extends State<LinkCheckerView> {
   final ScrollController _scrollController = ScrollController();
   bool _hasText = false;
   int _lastCheckCount = 0;
+  bool _hasShownNotification = false;
 
   @override
   void initState() {
@@ -61,9 +62,51 @@ class _LinkCheckerViewState extends State<LinkCheckerView> {
     });
   }
 
+  void _showFreeTierNotice() {
+    if (_hasShownNotification) return;
+    _hasShownNotification = true;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.info_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'We use free hosting. The server and recent checks may take up to 60 seconds to load for the first time.',
+                style: TextStyle(color: Colors.white, fontSize: 13),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF2A2E38),
+        duration: const Duration(seconds: 10),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: const BorderSide(color: Color(0xFF4A4E58)),
+        ),
+        action: SnackBarAction(
+          label: 'Dismiss',
+          textColor: AppColors.primaryOrange,
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+
+    // Show notice once when this screen first opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _showFreeTierNotice();
+    });
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -166,7 +209,7 @@ class _LinkCheckerViewState extends State<LinkCheckerView> {
                                             context
                                                 .read<LinkCheckerBloc>()
                                                 .add(CheckLinkEvent(_controller.text));
-                                            _controller.clear();
+                                            // Text is NOT cleared here anymore
                                           },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: _hasText

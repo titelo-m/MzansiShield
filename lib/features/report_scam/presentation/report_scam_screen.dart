@@ -30,6 +30,7 @@ class _ReportScamViewState extends State<ReportScamView> {
   final TextEditingController _targetController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
   final TextEditingController _typeController = TextEditingController();
+  bool _hasShownNotification = false;
 
   @override
   void dispose() {
@@ -39,9 +40,51 @@ class _ReportScamViewState extends State<ReportScamView> {
     super.dispose();
   }
 
+  void _showFreeTierNotice() {
+    if (_hasShownNotification) return;
+    _hasShownNotification = true;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.info_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'We use free hosting. Reports and stats may take up to 60 seconds to load for the first time.',
+                style: TextStyle(color: Colors.white, fontSize: 13),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF2A2E38),
+        duration: const Duration(seconds: 10),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: const BorderSide(color: Color(0xFF4A4E58)),
+        ),
+        action: SnackBarAction(
+          label: 'Dismiss',
+          textColor: AppColors.primaryOrange,
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+
+    // Show notice once when this screen first opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _showFreeTierNotice();
+    });
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -558,7 +601,29 @@ class _ReportsList extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFF2A2E38)),
         ),
-        child: Center(child: Text(t.translate('rs_empty'), style: GoogleFonts.inter(color: AppColors.textGrey))),
+        child: Center(
+          child: Column(
+            children: [
+              const CircularProgressIndicator(color: AppColors.primaryOrange),
+              const SizedBox(height: 16),
+              Text(
+                'Waking up the secure server... This may take up to 60 seconds on the free tier.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(color: AppColors.textGrey, fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  context.read<ReportScamBloc>().add(LoadReportsEvent());
+                },
+                child: Text(
+                  'Retry now',
+                  style: GoogleFonts.inter(color: AppColors.primaryOrange),
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
