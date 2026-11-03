@@ -50,6 +50,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     const Color cyberRed = Color(0xFFD32F2F);
+    
+    // Responsive font size
+    final screenWidth = MediaQuery.of(context).size.width;
+    final titleSize = screenWidth < 500 ? 42.0 : 64.0;
+    final logoSize = screenWidth < 500 ? 160.0 : 220.0;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0A),
@@ -62,8 +67,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 220,
-                  height: 220,
+                  width: logoSize,
+                  height: logoSize,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
@@ -92,11 +97,12 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   ).createShader(bounds),
                   child: Text(
                     'MzansiShield',
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
                       color: Colors.white,
-                      fontSize: 64,
+                      fontSize: titleSize,
                       fontWeight: FontWeight.w900,
-                      letterSpacing: 2.0,
+                      letterSpacing: 1.0,
                       shadows: [
                         Shadow(
                           color: Colors.black.withOpacity(0.5),
@@ -110,16 +116,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 const SizedBox(height: 16),
                 const Text(
                   'SECURE. VERIFY. PROTECT.',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF9E9E9E),
-                    fontSize: 14,
-                    letterSpacing: 4.0,
+                    fontSize: 12,
+                    letterSpacing: 3.0,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 70),
+                const SizedBox(height: 50),
                 SizedBox(
-                  width: 200,
+                  width: 180,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: const LinearProgressIndicator(

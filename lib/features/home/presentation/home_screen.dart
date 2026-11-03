@@ -65,7 +65,7 @@ class _AlertBanner extends StatelessWidget {
         final alert = state.alerts[state.currentIndex];
 
         return Padding(
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -73,98 +73,117 @@ class _AlertBanner extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: alert.accentColor.withOpacity(0.3), width: 1),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 4),
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: alert.accentColor,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 550;
+
+                if (isNarrow) {
+                  // Mobile Layout (Stacked)
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.warning_amber_rounded, color: alert.accentColor, size: 18),
+                          Container(
+                            width: 10, height: 10,
+                            decoration: BoxDecoration(color: alert.accentColor, shape: BoxShape.circle),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(Icons.warning_amber_rounded, color: alert.accentColor, size: 16),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               t.translate(alert.titleKey),
-                              style: GoogleFonts.inter(
-                                color: alert.accentColor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: GoogleFonts.inter(color: alert.accentColor, fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Text(
                         t.translate(alert.messageKey),
-                        style: GoogleFonts.inter(
-                          color: alert.accentColor.withOpacity(0.9),
-                          fontSize: 13,
-                        ),
+                        style: GoogleFonts.inter(color: alert.accentColor.withOpacity(0.9), fontSize: 13),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        t.translate(alert.timeKey),
-                        style: TextStyle(
-                          color: alert.accentColor.withOpacity(0.6),
-                          fontSize: 12,
-                        ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            t.translate(alert.timeKey),
+                            style: TextStyle(color: alert.accentColor.withOpacity(0.6), fontSize: 11),
+                          ),
+                          Row(
+                            children: [
+                              MouseRegion(cursor: SystemMouseCursors.click, child: IconButton(icon: Icon(Icons.chevron_left, color: alert.accentColor, size: 20), onPressed: () => context.read<AlertBloc>().add(PreviousAlertEvent()), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text('${state.currentIndex + 1}/${state.alerts.length}', style: TextStyle(color: alert.accentColor, fontSize: 12)),
+                              ),
+                              MouseRegion(cursor: SystemMouseCursors.click, child: IconButton(icon: Icon(Icons.chevron_right, color: alert.accentColor, size: 20), onPressed: () => context.read<AlertBloc>().add(NextAlertEvent()), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
+                              const SizedBox(width: 8),
+                              MouseRegion(cursor: SystemMouseCursors.click, child: IconButton(icon: Icon(Icons.close, color: alert.accentColor, size: 20), onPressed: () => context.read<AlertBloc>().add(CloseAlertEvent()), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
+                            ],
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                ),
-                Row(
+                  );
+                }
+
+                // Desktop Layout (Horizontal)
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: IconButton(
-                        icon: Icon(Icons.chevron_left, color: alert.accentColor, size: 20),
-                        onPressed: () => context.read<AlertBloc>().add(PreviousAlertEvent()),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        '${state.currentIndex + 1}/${state.alerts.length}',
-                        style: TextStyle(color: alert.accentColor, fontSize: 13),
-                      ),
-                    ),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: IconButton(
-                        icon: Icon(Icons.chevron_right, color: alert.accentColor, size: 20),
-                        onPressed: () => context.read<AlertBloc>().add(NextAlertEvent()),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 4),
+                      width: 12, height: 12,
+                      decoration: BoxDecoration(color: alert.accentColor, shape: BoxShape.circle),
                     ),
                     const SizedBox(width: 16),
-                    MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: IconButton(
-                        icon: Icon(Icons.close, color: alert.accentColor, size: 20),
-                        onPressed: () => context.read<AlertBloc>().add(CloseAlertEvent()),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.warning_amber_rounded, color: alert.accentColor, size: 18),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  t.translate(alert.titleKey),
+                                  style: GoogleFonts.inter(color: alert.accentColor, fontSize: 15, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            t.translate(alert.messageKey),
+                            style: GoogleFonts.inter(color: alert.accentColor.withOpacity(0.9), fontSize: 13),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            t.translate(alert.timeKey),
+                            style: TextStyle(color: alert.accentColor.withOpacity(0.6), fontSize: 12),
+                          ),
+                        ],
                       ),
                     ),
+                    Row(
+                      children: [
+                        MouseRegion(cursor: SystemMouseCursors.click, child: IconButton(icon: Icon(Icons.chevron_left, color: alert.accentColor, size: 20), onPressed: () => context.read<AlertBloc>().add(PreviousAlertEvent()), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text('${state.currentIndex + 1}/${state.alerts.length}', style: TextStyle(color: alert.accentColor, fontSize: 13)),
+                        ),
+                        MouseRegion(cursor: SystemMouseCursors.click, child: IconButton(icon: Icon(Icons.chevron_right, color: alert.accentColor, size: 20), onPressed: () => context.read<AlertBloc>().add(NextAlertEvent()), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
+                        const SizedBox(width: 16),
+                        MouseRegion(cursor: SystemMouseCursors.click, child: IconButton(icon: Icon(Icons.close, color: alert.accentColor, size: 20), onPressed: () => context.read<AlertBloc>().add(CloseAlertEvent()), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
+                      ],
+                    ),
                   ],
-                ),
-              ],
+                );
+              },
             ),
           ),
         );
@@ -209,7 +228,7 @@ class _HeroSection extends StatelessWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
               color: AppColors.primaryOrange,
-              fontSize: 52,
+              fontSize: 48,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -238,8 +257,8 @@ class _HeroSection extends StatelessWidget {
           MouseRegion(
             cursor: SystemMouseCursors.click,
             child: SizedBox(
-              width: 450,
-              height: 64,
+              width: 400,
+              height: 60,
               child: ElevatedButton(
                 onPressed: () => context.go('/link-checker'),
                 style: ElevatedButton.styleFrom(
