@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface LinkCheckRepository extends JpaRepository<LinkCheck, Long> {
-
     List<LinkCheck> findTop20ByOrderByCreatedAtDesc();
 }
