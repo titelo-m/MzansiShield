@@ -40,10 +40,15 @@ public class ReportController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Long>> stats() {
+    public ResponseEntity<Map<String, Object>> stats() {
+        long total = service.countTotal();
+        long verified = service.countVerified();
+        int accuracy = total == 0 ? 0 : (int) Math.round((verified * 100.0) / total);
+
         return ResponseEntity.ok(Map.of(
-                "totalReports", service.countTotal(),
-                "verifiedReports", service.countVerified()
+                "totalReports", total,
+                "verifiedReports", verified,
+                "accuracy", accuracy
         ));
     }
 }
